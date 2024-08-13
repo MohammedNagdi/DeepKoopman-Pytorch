@@ -1,5 +1,3 @@
-
-
 import torch
 import torch.nn as nn
 import numpy as np
@@ -8,6 +6,7 @@ from tqdm import tqdm
 import seaborn as sns
 import matplotlib.pyplot as plt
 from torch.autograd import Variable
+from kan import KAN, KANLinear
 
 
 
@@ -171,25 +170,32 @@ class KoopmanOperator(nn.Module):
 '''
 
 class Lusch(nn.Module):
-    def __init__(self,input_dim,koopman_dim,hidden_dim,delta_t=0.01,device="cpu"):
+    def __init__(self,input_dim,koopman_dim,hidden_dim,delta_t=0.01,device="cpu",arch="mlp",n_com=1,n_real=0):
         super(Lusch,self).__init__()
 
         self.device = device
         self.delta_t = delta_t
+        self.arch = arch
+        self.n_com = n_com
+        self.n_real = n_real
 
-        self.encoder = nn.Sequential(nn.Linear(input_dim,hidden_dim),
-                                     nn.ReLU(),
-                                     nn.Linear(hidden_dim, hidden_dim),
-                                     nn.ReLU(),
-                                     nn.Linear(hidden_dim,koopman_dim))
+        if self.arch == "mlp":
+            self.encoder = nn.Sequential(nn.Linear(input_dim,hidden_dim),
+                                        nn.ReLU(),
+                                        nn.Linear(hidden_dim, hidden_dim),
+                                        nn.ReLU(),
+                                        nn.Linear(hidden_dim,koopman_dim))
 
-        self.decoder = nn.Sequential(nn.Linear(koopman_dim,hidden_dim),
-                                     nn.ReLU(),
-                                     nn.Linear(hidden_dim, hidden_dim),
-                                     nn.ReLU(),
-                                     nn.Linear(hidden_dim,input_dim))
+            self.decoder = nn.Sequential(nn.Linear(koopman_dim,hidden_dim),
+                                        nn.ReLU(),
+                                        nn.Linear(hidden_dim, hidden_dim),
+                                        nn.ReLU(),
+                                        nn.Linear(hidden_dim,input_dim))
+        else:
+            self.encoder = KAN([input_dim,hidden_dim,hidden_dim,koopman_dim])
+            self.decoder = KAN([koopman_dim,hidden_dim,hidden_dim,input_dim])
 
-        self.koopman = KoopmanOperator(koopman_dim,delta_t,n_com=0,n_real=1,device=self.device)
+        self.koopman = KoopmanOperator(koopman_dim,delta_t,n_com=self.n_com,n_real=self.n_real,device=self.device)
 
 
         # Normalization occurs inside the model

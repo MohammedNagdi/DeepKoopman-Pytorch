@@ -13,9 +13,12 @@ import numpy as np
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     koopman_dim = 64
+    # update hidden dimesnion to 500 for MLP and 20-50 for KAN network
     hidden_dim = 500
     input_dim = 3
     delta_t = 0.01
+    number_cj = 1  # number of complex conjugate pairs
+    number_real = 0 # number of real eigenvalues
 
 
     epochs = 300
@@ -27,9 +30,10 @@ if __name__ == '__main__':
     save_every = 5
     start_epoch = 1
     device="mps"
+    arch = "mlp"
 
 
-    model = Lusch(input_dim,koopman_dim,hidden_dim = hidden_dim,delta_t=delta_t,device=device).to(device)
+    model = Lusch(input_dim,koopman_dim,hidden_dim = hidden_dim,delta_t=delta_t,device=device,arch=arch,n_com=number_cj,n_real=number_real).to(device)
 
     optimizer = torch.optim.Adam(model.parameters(),lr=lr)
 
