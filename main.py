@@ -22,11 +22,11 @@ if __name__ == '__main__':
     lr = 1e-3
     Sp = 72; horizon = 72; T = max(horizon,Sp)
     batch_size = 256
-    load_chkpt = True
+    load_chkpt = False
     chkpt_filename = "fixed_matrix_checkk"
     save_every = 5
     start_epoch = 1
-    device="cuda"
+    device="mps"
 
 
     model = Lusch(input_dim,koopman_dim,hidden_dim = hidden_dim,delta_t=delta_t,device=device).to(device)

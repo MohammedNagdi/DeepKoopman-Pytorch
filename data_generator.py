@@ -1,4 +1,5 @@
 import pickle
+import pandas as pd
 import os
 import torch
 from tqdm import tqdm
@@ -16,13 +17,13 @@ def load_data(df,chunk_size=1):
     X = torch.stack(X, 0)
     return X
 
-def load_dataset(dataset_name = "lorenz",file_path=r'.\data',chunk_size=1):
+def load_dataset(dataset_name = "lorenz",file_path=r'data',chunk_size=1):
 
     with open(os.path.join(file_path,f"{dataset_name}/{dataset_name}_train_inputs.pickle"), "rb") as handle:
-        train_df = pickle.load(handle)
+        train_df = pd.read_pickle(handle)
 
     with open(os.path.join(file_path,f"{dataset_name}/{dataset_name}_test_inputs.pickle"), "rb") as handle:
-        test_df = pickle.load(handle)
+        test_df = pd.read_pickle(handle)
 
     X_train = load_data(train_df,chunk_size)
     X_test = load_data(test_df,chunk_size)
