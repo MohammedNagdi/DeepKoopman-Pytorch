@@ -5,6 +5,7 @@
 import torch.optim
 
 from models import Lusch
+from models2 import Lusch_mixing
 from data_generator import load_dataset,differential_dataset
 from loss_functions import koopman_loss,prediction_loss
 from torch.utils.data import DataLoader
@@ -17,10 +18,6 @@ if __name__ == '__main__':
     hidden_dim = 500
     input_dim = 3
     delta_t = 0.01
-    number_cj = 0  # number of koopman operators constructed from complex conjugate pairs
-    number_real = 2 # number of koopman operators contructed from real eigenvalues
-
-
     epochs = 300
     lr = 1e-3
     Sp = 72; horizon = 72; T = max(horizon,Sp)
@@ -31,9 +28,18 @@ if __name__ == '__main__':
     start_epoch = 1
     device="mps"
     arch = "mlp"
+    type = "mixed"
 
-
-    model = Lusch(input_dim,koopman_dim,hidden_dim = hidden_dim,delta_t=delta_t,device=device,arch=arch,n_com=number_cj,n_real=number_real).to(device)
+    if type == "fixed":
+        number_cj = 0  # number of koopman operators constructed from complex conjugate pairs
+        number_real = 2 # number of koopman operators contructed from real eigenvalues
+        model = Lusch(input_dim,koopman_dim,hidden_dim = hidden_dim,delta_t=delta_t,device=device,arch=arch,n_com=number_cj,n_real=number_real).to(device)
+    else:
+        number_cj = 16 # number of complex conjugate pairs
+        if number_cj * 2 > koopman_dim:
+            raise ValueError("Number of complex conjugate pairs is greater than koopman dimension")
+        number_real = koopman_dim - number_cj * 2 # number of koopman operators contructed from real eigenvalues
+        model = Lusch_mixing(input_dim,koopman_dim,hidden_dim = hidden_dim,delta_t=delta_t,device=device,arch=arch,n_com=number_cj,n_real=number_real).to(device)
 
     optimizer = torch.optim.Adam(model.parameters(),lr=lr)
 
