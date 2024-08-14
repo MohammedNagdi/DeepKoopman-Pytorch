@@ -17,8 +17,8 @@ if __name__ == '__main__':
     hidden_dim = 500
     input_dim = 3
     delta_t = 0.01
-    number_cj = 1  # number of complex conjugate pairs
-    number_real = 0 # number of real eigenvalues
+    number_cj = 0  # number of koopman operators constructed from complex conjugate pairs
+    number_real = 2 # number of koopman operators contructed from real eigenvalues
 
 
     epochs = 300

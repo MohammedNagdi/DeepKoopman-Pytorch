@@ -43,6 +43,7 @@ class KoopmanOperator(nn.Module):
         y = x[:,0,:]
         for t in range(T):
             complex_list = []
+            # ensemble of complex conjugate pairs
             for i in range(self.complex_pairs):
                 mu,omega = torch.unbind(self.complex_pairs_models[i](y).reshape(-1,self.num_eigenvalues,2),-1)
 
@@ -68,32 +69,30 @@ class KoopmanOperator(nn.Module):
                     K[:, i + 1, i + 0] = sin[:,index]  * exp[:,index]
                     K[:, i + 1, i + 1] = cos[:,index] * exp[:,index]
                 complex_list.append(torch.matmul(K,y.unsqueeze(-1)).squeeze(-1))
-            if self.complex_pairs:
-                complex_part = torch.stack(complex_list, dim=0)
-                complex_part = torch.sum(complex_part, dim=0)
             
             real_list = []
+            # ensemble of real koopman operators
             for i in range(self.real):
-                # the output should be one value
-                #re = torch.unbind(self.real_models[i](y).reshape(-1,self.num_eigenvalues),-1)
                 re = self.real_models[i](y)
                 real_list.append(torch.multiply(torch.exp(self.delta_t * re),y))
-            if self.real:
-                # sum all the tensors in real_list along the second dimension
-                real_part = torch.stack(real_list, dim=0)
-                real_part = torch.sum(real_part, dim=0)/len(real_list)
                 
                 
-                #print(f'real part {real_part}')
+            # sum all the koopman operators output
             if self.complex_pairs and self.real:
                 # sum real part and compex part
-                y = (complex_part + real_part)/2
-                #print(f'complex + real {y}')
+                complex_part = torch.stack(complex_list, dim=0)
+                complex_part = torch.sum(complex_part, dim=0)
+                real_part = torch.stack(real_list, dim=0)
+                real_part = torch.sum(real_part, dim=0)
+                y = (complex_part + real_part)/(len(real_list)+len(complex_list))
                 
             elif self.complex_pairs:
-                y = complex_part
+                complex_part = torch.stack(complex_list, dim=0)
+                y = torch.sum(complex_part, dim=0)/len(complex_list)
+
             else:
-                y = real_part
+                real_part = torch.stack(real_list, dim=0)
+                y = torch.sum(real_part, dim=0)/len(real_list)                
             Y[:,t,:] = y
 
         return Y
@@ -113,61 +112,6 @@ class parametrization_network(nn.Module):
     def forward(self,x):
         return self.fc(x)
 
-'''
-Old Koopman Operator
-class KoopmanOperator(nn.Module):
-    def __init__(self,koopman_dim,delta_t,device="cpu"):
-        super(KoopmanOperator,self).__init__()
-
-        self.koopman_dim = koopman_dim
-        self.num_eigenvalues = int(koopman_dim/2)
-        self.delta_t = delta_t
-        self.parameterization = nn.Sequential(
-            nn.Linear(self.koopman_dim,self.num_eigenvalues*2),
-            nn.Tanh(),
-            nn.Linear(self.num_eigenvalues*2,self.num_eigenvalues*2)
-        )
-        self.device = device
-
-    def forward(self,x,T):
-        # x is B  x Latent
-        # it is the one because only initial point (T=1)
-
-        # mu is B  x Latent/2
-        # omega is B  x Latent/2
-
-        Y = Variable(torch.zeros(x.shape[0],T,self.koopman_dim)).to(self.device)
-        y = x[:,0,:]
-        for t in range(T):
-            mu,omega = torch.unbind(self.parameterization(y).reshape(-1,self.num_eigenvalues,2),-1)
-
-            # K is B x Latent x Latent
-
-            # B x Koopmandim/2
-            exp = torch.exp(self.delta_t * mu)
-
-            # B x Latent/2
-            cos = torch.cos(self.delta_t * omega)
-            sin = torch.sin(self.delta_t * omega)
-
-
-            K = Variable(torch.zeros(x.shape[0],self.koopman_dim,self.koopman_dim)).to(self.device)
-
-            for i in range(0,self.koopman_dim,2):
-                #for j in range(i,i+2):
-                index = i//2
-
-                K[:, i + 0, i + 0] = cos[:,index] *  exp[:,index]
-                K[:, i + 0, i + 1] = -sin[:,index] * exp[:,index]
-                K[:, i + 1, i + 0] = sin[:,index]  * exp[:,index]
-                K[:, i + 1, i + 1] = cos[:,index] * exp[:,index] #
-
-            y = torch.matmul(K,y.unsqueeze(-1)).squeeze(-1)
-
-            Y[:,t,:] = y
-
-        return Y
-'''
 
 class Lusch(nn.Module):
     def __init__(self,input_dim,koopman_dim,hidden_dim,delta_t=0.01,device="cpu",arch="mlp",n_com=1,n_real=0):
