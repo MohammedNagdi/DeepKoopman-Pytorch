@@ -6,7 +6,7 @@ from tqdm import tqdm
 import seaborn as sns
 import matplotlib.pyplot as plt
 from torch.autograd import Variable
-from kan import KAN, KANLinear
+from ekan import KAN, KANLinear
 
 
 

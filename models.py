@@ -6,7 +6,8 @@ from tqdm import tqdm
 import seaborn as sns
 import matplotlib.pyplot as plt
 from torch.autograd import Variable
-from kan import KAN, KANLinear
+from ekan import KAN, KANLinear
+from fastkan import FastKAN, FastKANLayer
 
 
 
@@ -122,6 +123,8 @@ class Lusch(nn.Module):
         self.arch = arch
         self.n_com = n_com
         self.n_real = n_real
+        kan_type = "spline"
+        #kan_type = "RBF"
 
         if self.arch == "mlp":
             self.encoder = nn.Sequential(nn.Linear(input_dim,hidden_dim),
@@ -136,8 +139,12 @@ class Lusch(nn.Module):
                                         nn.ReLU(),
                                         nn.Linear(hidden_dim,input_dim))
         else:
-            self.encoder = KAN([input_dim,hidden_dim,hidden_dim,koopman_dim])
-            self.decoder = KAN([koopman_dim,hidden_dim,hidden_dim,input_dim])
+            if kan_type == "spline":
+                self.encoder = KAN([input_dim,hidden_dim,koopman_dim],grid_range=[-3,3],grid_size=15)
+                self.decoder = KAN([koopman_dim,hidden_dim,input_dim],grid_range=[-3,3],grid_size=15)
+            else:
+                self.encoder = FastKAN([input_dim,hidden_dim,koopman_dim],grid_min=-3,grid_max=3,num_grids=20)
+                self.decoder = FastKAN([koopman_dim,hidden_dim,input_dim],grid_min=-3,grid_max=3,num_grids=20)
 
         self.koopman = KoopmanOperator(koopman_dim,delta_t,n_com=self.n_com,n_real=self.n_real,device=self.device)
 

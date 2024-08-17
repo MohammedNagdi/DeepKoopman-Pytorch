@@ -15,7 +15,7 @@ import numpy as np
 if __name__ == '__main__':
     koopman_dim = 64
     # update hidden dimesnion to 500 for MLP and 20-50 for KAN network
-    hidden_dim = 500
+    hidden_dim = 50
     input_dim = 3
     delta_t = 0.01
     epochs = 300
@@ -27,12 +27,12 @@ if __name__ == '__main__':
     save_every = 5
     start_epoch = 1
     device="mps"
-    arch = "mlp"
-    type = "mixed"
+    arch = "kan"
+    type = "fixed"
 
     if type == "fixed":
         number_cj = 0  # number of koopman operators constructed from complex conjugate pairs
-        number_real = 2 # number of koopman operators contructed from real eigenvalues
+        number_real = 1 # number of koopman operators contructed from real eigenvalues
         model = Lusch(input_dim,koopman_dim,hidden_dim = hidden_dim,delta_t=delta_t,device=device,arch=arch,n_com=number_cj,n_real=number_real).to(device)
     else:
         number_cj = 16 # number of complex conjugate pairs
