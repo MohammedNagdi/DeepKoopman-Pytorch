@@ -7,13 +7,14 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 from torch.autograd import Variable
 from ekan import KAN, KANLinear
+from fastkan import FastKAN, FastKANLayer
 
 
 
 '''New Implementation of Koopman Operator'''
 
 class KoopmanOperator(nn.Module):
-    def __init__(self,koopman_dim,delta_t,n_com,n_real,device="cpu"):
+    def __init__(self,koopman_dim,delta_t,n_com,n_real,device="cpu",oper_arch="mlp"):
         super(KoopmanOperator,self).__init__()
 
         # for each complex conjugate pair and for each real number create a parametrization network
@@ -23,6 +24,14 @@ class KoopmanOperator(nn.Module):
         self.real_num_eigenvalues = n_real
         self.device = device
         self.delta_t = delta_t
+        self.oper_arch = oper_arch
+
+        if self.oper_arch == "mlp":
+            parametrization_network = parametrization_network_mlp
+        elif self.oper_arch == "fastkan":
+            parametrization_network = parametrization_network_fastKAN
+        elif self.oper_arch == "ekan":
+            parametrization_network = parametrization_network_eKAN
 
         # create the complex NN
         self.complex_parametrization = parametrization_network(koopman_dim, self.complex_num_eigenvalues*2).to(device=self.device)
@@ -48,30 +57,59 @@ class KoopmanOperator(nn.Module):
                 K[:, i + 1, i + 1] = cos[:,index] * exp[:,index]
             
             re = self.real_parametrization(y)
-            for i in range(self.real_num_eigenvalues*2,self.koopman_dim):
-                K[:,i,i] = torch.exp(self.delta_t * re[:,i-self.real_num_eigenvalues*2])
+            for i in range(self.complex_num_eigenvalues*2,self.koopman_dim):
+                K[:,i,i] = torch.exp(self.delta_t * re[:,i-self.complex_num_eigenvalues*2])
             y = torch.matmul(K,y.unsqueeze(-1)).squeeze(-1)
             Y[:,t,:] = y
         return Y
                 
+
 # create a parametrization network
-class parametrization_network(nn.Module):
+'''Parametrization Networks'''
+
+# MLP
+class parametrization_network_mlp(nn.Module):
     def __init__(self,koopman_dim, latent_dim):
-        super(parametrization_network,self).__init__()
+        super(parametrization_network_mlp,self).__init__()
 
         self.koopman_dim = koopman_dim
 
         self.fc = nn.Sequential(
             nn.Linear(koopman_dim,latent_dim),
-            nn.ReLU(),
+            nn.Tanh(),
             nn.Linear(latent_dim,latent_dim)
         )
     def forward(self,x):
         return self.fc(x)
 
+# FastKAN
+class parametrization_network_fastKAN(nn.Module):
+    def __init__(self,koopman_dim, latent_dim):
+        super(parametrization_network_fastKAN,self).__init__()
+
+        self.koopman_dim = koopman_dim
+
+        #self.fc = KAN([koopman_dim,latent_dim],grid_range=[-3,3],grid_size=15)
+        self.fc = FastKAN([koopman_dim,latent_dim],grid_min=-1,grid_max=1)
+    def forward(self,x):
+        return self.fc(x)
+
+# efficient KAN
+class parametrization_network_eKAN(nn.Module):
+    def __init__(self,koopman_dim, latent):
+        super(parametrization_network_eKAN,self).__init__()
+
+        self.koopman_dim = koopman_dim
+
+        self.fc = KAN([koopman_dim,latent])
+    def forward(self,x):
+        return self.fc(x)
+    
+
+
 
 class Lusch_mixing(nn.Module):
-    def __init__(self,input_dim,koopman_dim,hidden_dim,delta_t=0.01,device="cpu",arch="mlp",n_com=1,n_real=0):
+    def __init__(self,input_dim,koopman_dim,hidden_dim,delta_t=0.01,device="cpu",arch="mlp",n_com=1,n_real=0,oper_arch="mlp"):
         super(Lusch_mixing,self).__init__()
 
         self.device = device
@@ -79,24 +117,31 @@ class Lusch_mixing(nn.Module):
         self.arch = arch
         self.n_com = n_com
         self.n_real = n_real
+        self.oper_arch = oper_arch
 
         if self.arch == "mlp":
             self.encoder = nn.Sequential(nn.Linear(input_dim,hidden_dim),
-                                        nn.ReLU(),
+                                        nn.Tanh(),
                                         nn.Linear(hidden_dim, hidden_dim),
-                                        nn.ReLU(),
-                                        nn.Linear(hidden_dim,koopman_dim))
+                                        nn.Tanh(),
+                                        nn.Linear(hidden_dim,koopman_dim),
+                                        nn.LayerNorm(koopman_dim))
 
             self.decoder = nn.Sequential(nn.Linear(koopman_dim,hidden_dim),
-                                        nn.ReLU(),
+                                        nn.Tanh(),
                                         nn.Linear(hidden_dim, hidden_dim),
-                                        nn.ReLU(),
+                                        nn.Tanh(),
                                         nn.Linear(hidden_dim,input_dim))
-        else:
-            self.encoder = KAN([input_dim,hidden_dim,hidden_dim,koopman_dim])
-            self.decoder = KAN([koopman_dim,hidden_dim,hidden_dim,input_dim])
+        elif self.arch == "ekan":
+                self.encoder = KAN([input_dim,hidden_dim,koopman_dim])
+                self.decoder = KAN([koopman_dim,hidden_dim,input_dim])
 
-        self.koopman = KoopmanOperator(koopman_dim,delta_t,n_com=self.n_com,n_real=self.n_real,device=self.device)
+        elif self.arch == "fastkan":
+                self.encoder = FastKAN([input_dim,hidden_dim,koopman_dim],grid_min=-1,grid_max=1)
+                self.decoder = FastKAN([koopman_dim,hidden_dim,input_dim],grid_min=-1,grid_max=1)
+
+
+        self.koopman = KoopmanOperator(koopman_dim,delta_t,n_com=self.n_com,n_real=self.n_real,device=self.device,oper_arch=self.oper_arch)
 
 
         # Normalization occurs inside the model

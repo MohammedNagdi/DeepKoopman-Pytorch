@@ -8,7 +8,9 @@ def koopman_loss(x,model,Sp,T,alpha1=2,alpha2=1e-10):
     MAX_T = max(Sp,T)
 
     encoder_x = model.embed(x)
+    #print(f'encoder_x: {encoder_x[:,-1,:]}')
     recover_x = model.recover(encoder_x)
+    #print(f'recover_x: {recover_x[:,-1,:]}')
 
 
     koopman_stepped = model.koopman_operator(encoder_x[:,[0],:],MAX_T)
@@ -20,10 +22,12 @@ def koopman_loss(x,model,Sp,T,alpha1=2,alpha2=1e-10):
 
 
     lin_loss = F.mse_loss(encoder_x[:,1:T,:],koopman_stepped[:,:(T-1),:])
+    #print(f'x: {x[:,T-1,:]}')
+    #print(f'encoder_x: {encoder_x[:,1,:]}, koopman_stepped: {koopman_stepped[:,2,:]}')
     pred_loss = F.mse_loss(recover_koopman,x[:,1:Sp,:],)
     reconstruction_loss = F.mse_loss(recover_x,x)
     inf_loss = reconstruction_inf_loss + prediction_inf_loss
-
+    #print(f'pred_loss: {pred_loss}, reconstruction_loss: {reconstruction_loss}, lin_loss: {lin_loss}, inf_loss: {inf_loss}')
     loss = alpha1*(pred_loss + reconstruction_loss) + lin_loss + alpha2*inf_loss
     return loss
 
