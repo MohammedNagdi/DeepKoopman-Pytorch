@@ -17,7 +17,7 @@ def load_data(df,chunk_size=1):
     X = torch.stack(X, 0)
     return X
 
-def load_dataset(dataset_name = "lorenz",file_path=r'data',chunk_size=1):
+def load_dataset(dataset_name = "Repressilator",file_path=r'data',chunk_size=1):
 
     with open(os.path.join(file_path,f"{dataset_name}/{dataset_name}_train_inputs.pickle"), "rb") as handle:
         train_df = pd.read_pickle(handle)
@@ -35,15 +35,17 @@ class differential_dataset(Dataset):
 
     def __init__(self,X,horizon):
 
-        self.X = X
-        self.horizon = horizon
-        self.D = X.shape[-1]
-        self.T = X.shape[1]-self.horizon
-        self.mu = torch.tensor([torch.mean(X[:,:,i]) for i in range(self.D)])
-        self.std = torch.tensor([torch.std(X[:,:,i]) for i in range(self.D)])
+        self.X = X # the entire dataset
+        self.horizon = horizon # the horizon of the forecast
+        self.D = X.shape[-1] # the number of dimensions
+        self.T = X.shape[1]-self.horizon # should be length - horizon - horizon 
+        self.mu = torch.tensor([torch.mean(X[:,:,i]) for i in range(self.D)]) # mean of each dimension
+        self.std = torch.tensor([torch.std(X[:,:,i]) for i in range(self.D)]) # std of each dimension
+        self.max = torch.tensor([torch.max(X[:,:,i]) for i in range(self.D)]) # max of each dimension
+        self.min = torch.tensor([torch.min(X[:,:,i]) for i in range(self.D)]) # min of each dimension
 
     def __len__(self):
-        return self.X.shape[0]
+        return self.X.shape[0] # number of samples in this case is the number of time series
 
     def __getitem__(self,idx):
 
@@ -51,10 +53,10 @@ class differential_dataset(Dataset):
             idx = idx.tolist()
         if type(idx) is int:
             idx = [idx]
-
-        start = torch.randint(low=0,high=self.T+1,size=(len(idx),))
-        windows = torch.tensor([list(range(i,i+self.horizon)) for i in start]).unsqueeze(-1).repeat(1,1,self.D)
-        x = torch.gather(self.X[idx],1,windows).squeeze()
+        # take each index as a time series
+        start = torch.randint(low=0,high=self.T+1,size=(len(idx),)) # generate a random starting point
+        windows = torch.tensor([list(range(i,i+self.horizon)) for i in start]).unsqueeze(-1).repeat(1,1,self.D) # generate the window from the starting point to the horizon
+        x = torch.gather(self.X[idx],1,windows).squeeze() # make it in a tensor of [1,horizon,D]
 
         return x
 
