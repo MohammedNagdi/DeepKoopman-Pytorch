@@ -114,17 +114,22 @@ lamda = 10
 
 seed = 1
 X_test = FluidFlowOnAttractorFn(x1range, x2range,x3range, int(0.1*numICs), tSpan, mu, omega,A,lamda, seed)
-filename_test = filenamePrefix + '_test_input.pickle'   
+filename_test = filenamePrefix + '_test_inputs.pickle'   
 X_test.to_pickle(os.path.join(filenamePrefix, filename_test))
 
 
 seed = 2
 X_val = FluidFlowOnAttractorFn(x1range, x2range,x3range, int(0.2*numICs), tSpan, mu, omega,A,lamda, seed)
-filename_val = filenamePrefix + '_val_input.pickle'
+filename_val = filenamePrefix + '_val_inputs.pickle'
 X_val.to_pickle(os.path.join(filenamePrefix, filename_val))
 
 for j in range(1, 3):
     seed = 2+j
-    X_train = FluidFlowOnAttractorFn(x1range, x2range,x3range, int(0.7*numICs), tSpan, mu, omega,A,lamda, seed)
-    filename_train = filenamePrefix + '_train' + str(j) + '_input.pickle'
-    X_train.to_pickle(os.path.join(filenamePrefix, filename_train))
+    if j == 1:
+        X_train = FluidFlowOnAttractorFn(x1range, x2range,x3range, int(0.7*numICs), tSpan, mu, omega,A,lamda, seed)
+        filename_train = filenamePrefix + '_train'+'_inputs.pickle'
+        X_train.to_pickle(os.path.join(filenamePrefix, filename_train))
+    else:
+        X_train = FluidFlowOnAttractorFn(x1range, x2range,x3range, int(0.7*numICs), tSpan, mu, omega,A,lamda, seed)
+        filename_train = filenamePrefix + '_train' + str(j) + '_inputs.pickle'
+        X_train.to_pickle(os.path.join(filenamePrefix, filename_train))
