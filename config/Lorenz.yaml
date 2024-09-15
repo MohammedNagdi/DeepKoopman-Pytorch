@@ -1,0 +1,48 @@
+# Experiment Configuration
+
+Experiment_name: "lorenz"
+
+# Network Dimensions
+koopman_dim: 8
+hidden_dim: 50
+input_dim: 3
+oper_hidden_dim: 50
+
+dataset:
+  delta_t: 0.01
+  dataset_name: "lorenz"
+  sample_per_traj: 1
+
+# Training Parameters
+training:
+  epochs: 200
+  learning_rate: 0.001  # equivalent to 1e-3
+  save_every: 5
+  start_epoch: 1
+  batch_size: 128
+  load_checkpoint: False  # True if loading a checkpoint
+  checkpoint_filename: "fixed_matrix_checkk"  # Filename to save the checkpoint
+  optimizer: "adam"  
+  alpha1: 2
+  alpha2: 1e-8
+  test_data_path : "data/lorenz/lorenz_val_inputs.pickle"
+
+# Forecasting Parameters
+forecasting:
+  sp: 72
+  horizon: 72
+
+# Architectural Parameters
+architecture:
+  device: "mps"  # "cpu", "cuda", or "mps"
+  model_arch: "ekan"  # Model architecture: "mlp", "fastkan", or "ekan"
+  operator_arch: "ekan"  # Operator network architecture: "mlp" or "kan"
+  operator_type: "mixed"  # Type of Koopman operator: "fixed" or "mixing"
+
+fixed:
+  number_of_real_koopman: 1
+  number_of_complex_koopman: 1
+
+mixed:
+  number_of_conjugate_pairs: 2
+  number_of_real_koopman: 4

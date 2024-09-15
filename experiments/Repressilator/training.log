@@ -1,0 +1,215 @@
+INFO:root:
+
+INFO:root:========== EPOCH 1 ==========
+INFO:root:
+Prediction Loss: 496.2588195800781
+INFO:root:TRAIN LOSS: 1845.410041809082
+INFO:root:TEST LOSS: 1540.4758911132812
+INFO:root:
+
+INFO:root:========== EPOCH 2 ==========
+INFO:root:
+Prediction Loss: 405.4738464355469
+INFO:root:TRAIN LOSS: 1388.232536315918
+INFO:root:TEST LOSS: 1166.7747802734375
+INFO:root:
+
+INFO:root:========== EPOCH 3 ==========
+INFO:root:
+Prediction Loss: 140.45372009277344
+INFO:root:TRAIN LOSS: 854.2006216049194
+INFO:root:TEST LOSS: 332.78694915771484
+INFO:root:
+
+INFO:root:========== EPOCH 4 ==========
+INFO:root:
+Prediction Loss: 110.65494537353516
+INFO:root:TRAIN LOSS: 311.40734243392944
+INFO:root:TEST LOSS: 254.49445724487305
+INFO:root:
+
+INFO:root:========== EPOCH 5 ==========
+INFO:root:
+Prediction Loss: 88.64879608154297
+INFO:root:TRAIN LOSS: 223.43967151641846
+INFO:root:TEST LOSS: 206.92976760864258
+INFO:root:
+
+INFO:root:========== EPOCH 6 ==========
+INFO:root:
+Prediction Loss: 71.06119537353516
+INFO:root:TRAIN LOSS: 220.72516918182373
+INFO:root:TEST LOSS: 183.4839324951172
+INFO:root:
+
+INFO:root:========== EPOCH 7 ==========
+INFO:root:
+Prediction Loss: 95.41752624511719
+INFO:root:TRAIN LOSS: 310.6345901489258
+INFO:root:TEST LOSS: 206.28570556640625
+INFO:root:
+
+INFO:root:========== EPOCH 8 ==========
+INFO:root:
+Prediction Loss: 71.87444305419922
+INFO:root:TRAIN LOSS: 180.02071046829224
+INFO:root:TEST LOSS: 141.22913932800293
+INFO:root:
+
+INFO:root:========== EPOCH 9 ==========
+INFO:root:
+Prediction Loss: 65.26400756835938
+INFO:root:TRAIN LOSS: 155.364515542984
+INFO:root:TEST LOSS: 150.42166900634766
+INFO:root:
+
+INFO:root:========== EPOCH 10 ==========
+INFO:root:
+Prediction Loss: 58.88290786743164
+INFO:root:TRAIN LOSS: 129.13170051574707
+INFO:root:TEST LOSS: 129.0618019104004
+INFO:root:
+
+INFO:root:========== EPOCH 11 ==========
+INFO:root:
+Prediction Loss: 53.77983856201172
+INFO:root:TRAIN LOSS: 121.81880259513855
+INFO:root:TEST LOSS: 96.87953186035156
+INFO:root:
+
+INFO:root:========== EPOCH 12 ==========
+INFO:root:
+Prediction Loss: 45.7629280090332
+INFO:root:TRAIN LOSS: 103.95924496650696
+INFO:root:TEST LOSS: 97.16988945007324
+INFO:root:
+
+INFO:root:========== EPOCH 13 ==========
+INFO:root:
+Prediction Loss: 39.23635482788086
+INFO:root:TRAIN LOSS: 98.00642919540405
+INFO:root:TEST LOSS: 112.35881996154785
+INFO:root:
+
+INFO:root:========== EPOCH 14 ==========
+INFO:root:
+Prediction Loss: 34.15957260131836
+INFO:root:TRAIN LOSS: 88.93276822566986
+INFO:root:TEST LOSS: 75.69558334350586
+INFO:root:
+
+INFO:root:========== EPOCH 15 ==========
+INFO:root:
+Prediction Loss: 29.39492416381836
+INFO:root:TRAIN LOSS: 78.04563176631927
+INFO:root:TEST LOSS: 83.75450134277344
+INFO:root:
+
+INFO:root:========== EPOCH 16 ==========
+INFO:root:
+Prediction Loss: 26.70437240600586
+INFO:root:TRAIN LOSS: 78.81517791748047
+INFO:root:TEST LOSS: 81.90538501739502
+INFO:root:
+
+INFO:root:========== EPOCH 17 ==========
+INFO:root:
+Prediction Loss: 23.47615623474121
+INFO:root:TRAIN LOSS: 67.81838238239288
+INFO:root:TEST LOSS: 60.36898231506348
+INFO:root:
+
+INFO:root:========== EPOCH 18 ==========
+INFO:root:
+Prediction Loss: 20.092073440551758
+INFO:root:TRAIN LOSS: 54.23526334762573
+INFO:root:TEST LOSS: 62.59498310089111
+INFO:root:
+
+INFO:root:========== EPOCH 19 ==========
+INFO:root:
+Prediction Loss: 18.074552536010742
+INFO:root:TRAIN LOSS: 61.70896244049072
+INFO:root:TEST LOSS: 53.31522083282471
+INFO:root:
+
+INFO:root:========== EPOCH 20 ==========
+INFO:root:
+Prediction Loss: 16.517520904541016
+INFO:root:TRAIN LOSS: 49.571181774139404
+INFO:root:TEST LOSS: 58.82862567901611
+INFO:root:
+
+INFO:root:========== EPOCH 21 ==========
+INFO:root:
+Prediction Loss: 14.175865173339844
+INFO:root:TRAIN LOSS: 56.64458191394806
+INFO:root:TEST LOSS: 49.67551517486572
+INFO:root:
+
+INFO:root:========== EPOCH 22 ==========
+INFO:root:
+Prediction Loss: 12.95188045501709
+INFO:root:TRAIN LOSS: 42.757720828056335
+INFO:root:TEST LOSS: 46.85789203643799
+INFO:root:
+
+INFO:root:========== EPOCH 23 ==========
+INFO:root:
+Prediction Loss: 11.59325885772705
+INFO:root:TRAIN LOSS: 43.378383576869965
+INFO:root:TEST LOSS: 42.164530754089355
+INFO:root:
+
+INFO:root:========== EPOCH 24 ==========
+INFO:root:
+Prediction Loss: 10.64574146270752
+INFO:root:TRAIN LOSS: 42.15704017877579
+INFO:root:TEST LOSS: 31.572697162628174
+INFO:root:
+
+INFO:root:========== EPOCH 25 ==========
+INFO:root:
+Prediction Loss: 10.07634162902832
+INFO:root:TRAIN LOSS: 42.43483591079712
+INFO:root:TEST LOSS: 29.936267375946045
+INFO:root:
+
+INFO:root:========== EPOCH 26 ==========
+INFO:root:
+Prediction Loss: 9.198807716369629
+INFO:root:TRAIN LOSS: 43.567048251628876
+INFO:root:TEST LOSS: 30.86697816848755
+INFO:root:
+
+INFO:root:========== EPOCH 27 ==========
+INFO:root:
+Prediction Loss: 9.445518493652344
+INFO:root:TRAIN LOSS: 38.36644446849823
+INFO:root:TEST LOSS: 32.49747610092163
+INFO:root:
+
+INFO:root:========== EPOCH 28 ==========
+INFO:root:
+Prediction Loss: 7.982589244842529
+INFO:root:TRAIN LOSS: 42.7713189125061
+INFO:root:TEST LOSS: 30.898765563964844
+INFO:root:
+
+INFO:root:========== EPOCH 29 ==========
+INFO:root:
+Prediction Loss: 7.810781002044678
+INFO:root:TRAIN LOSS: 30.83465999364853
+INFO:root:TEST LOSS: 49.6403226852417
+INFO:root:
+
+INFO:root:========== EPOCH 30 ==========
+INFO:root:
+Prediction Loss: 6.486830234527588
+INFO:root:TRAIN LOSS: 35.47307324409485
+INFO:root:TEST LOSS: 44.070374488830566
+INFO:root:COMPLETE NOW :)
+INFO:root:====================================
+INFO:root:Evaluating the model
+INFO:root: The overall loss for the testing data is: 34.930620193481445
+INFO:root: The forecast loss for the testing data is: 7.810781002044678
